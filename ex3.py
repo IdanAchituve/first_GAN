@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
 import random
 import generate_data as gd
@@ -68,7 +67,8 @@ H2_G = 10  # 2nd hidden layer size in the generator
 H1_D = 10  # 1st hidden layer size in the discriminator
 H2_D = 10  # 2nd hidden layer size in the discriminator
 p = 0.2  # dropout probability
-num_epochs = 2000
+num_epochs = 3000
+to_print = 500
 reg = 0.0001  # regularization
 lr_g = 0.0002  # generator learning rate
 beta_g = 0.5  # Beta1 hyperparam for Adam optimizers
@@ -158,7 +158,7 @@ for epoch in range(num_epochs):
         # (2) Update G network: maximize log(D(G(z)))
         # Alternative is to minimize -y_t*log(D(G(z))) with labels of "1" and with gradient descent
         # update generator weights every k steps
-        if i % k == 0:
+        if i % k == k-1:
 
             netG.train()
             netG.zero_grad()
@@ -184,7 +184,7 @@ for epoch in range(num_epochs):
     G_losses.append(gen_loss)
 
     # Output training stats
-    if epoch % 500 == 499:
+    if epoch % to_print == to_print-1:
         print('[%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f'
               % (epoch, num_epochs,
                  D_losses[-1].item(), G_losses[-1].item(), D_x/num_samples, D_G_z1/num_samples, D_G_z2/gen_num_examples))
